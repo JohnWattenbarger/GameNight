@@ -7,6 +7,7 @@ pygame.init()
 WIDTH = 800
 HEIGHT = 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
+backgroundColor = (100, 220, 230)
 
 # Setup player
 playerWidth = 50
@@ -22,12 +23,15 @@ playerSpeed = 8
 enemyColumns = 8
 enemyRows = 3
 
-enemyWidth = WIDTH / (enemyColumns+2)
-enemyHeight = playerHeight
+enemyWidth = WIDTH / (enemyColumns) / 2
+enemyHeight = 40
 
 enemySpeed = 5
 enemyColor = (50, 250, 50)
 
+enemyGap = enemyWidth
+
+# create an enemy object to keep track of different attributes
 class Enemy():
     def __init__(self, x, y, width, height, speed, color):
         self.x = x
@@ -37,16 +41,59 @@ class Enemy():
         self.speed = speed
         self.color = color
 
-        self.rect = (x, y, width, height)
+        self.points = []
+
+        # self.rect = (x, y, width, height)
+
+        # used to rotate in a circle
+        self.startingX = x
+        self.startingY = y
+
+        self.moveDistance = 50
+        self.nextPoint = 0
+
+        self.setupRotatingPoints()
+
+    def moveTowards(self, newX, newY):
+        print('newX: ' + str(newX))
+        if self.x < newX:
+            self.x += self.speed
+        elif self.x > newX:
+            self.x -= self.speed
+
+        if self.y < newY:
+            self.y += self.speed
+        elif self.y > newY:
+            self.y -= self.speed
+
+    def setupRotatingPoints(self):
+        self.points.append((self.startingX, self.startingY))
+        self.points.append((self.startingX, self.startingY + self.moveDistance))
+        self.points.append((self.startingX + self.moveDistance, self.startingY + self.moveDistance))
+        self.points.append((self.startingX + self.moveDistance, self.startingY))
+
+    def moveToNextPoint(self):
+        # update next point
+        if self.x == self.points[self.nextPoint][0] and self.y == self.points[self.nextPoint][1]:
+            if self.nextPoint < len(self.points)-1:
+                self.nextPoint += 1
+            else:
+                self.nextPoint = 0
+
+        # move towards next point
+        self.moveTowards(self.points[self.nextPoint][0], self.points[self.nextPoint][1])
 
 # create list of enemies
 enemies = []
 
 for col in range(0, enemyColumns):
     for row in range(0, enemyRows):
-        enemies.append(Enemy(col*enemyWidth + col*10, row*enemyHeight + row*10, enemyWidth, enemyHeight, enemySpeed, enemyColor))
+        # enemies.append(Enemy(col*enemyWidth + col*enemyGap + enemyWidth, row*enemyHeight + row*enemyGap + enemyHeight, enemyWidth, enemyHeight, enemySpeed, enemyColor))
 
+        enemyX = col * enemyWidth + col * enemyGap
+        enemyY = row * enemyHeight + row * enemyGap
 
+        enemies.append(Enemy(enemyX, enemyY, enemyWidth, enemyHeight, enemySpeed, enemyColor))
 
 # key presses
 keyLeft = False
@@ -60,7 +107,7 @@ gameOver = False
 while not gameOver:
     for event in pygame.event.get():
         # test
-        print(event)
+        # print(event)
 
         if event.type == pygame.QUIT:
             sys.exit()
@@ -83,14 +130,15 @@ while not gameOver:
     if keyRight and playerX < WIDTH - playerWidth:
         playerX += playerSpeed
 
-    screen.fill((100, 220, 230))
+    screen.fill(backgroundColor)
 
     # draw player
     pygame.draw.rect(screen, playerColor, (playerX, playerY, playerWidth, playerHeight))
 
     # draw enemies
     for e in enemies:
-        pygame.draw.rect(screen, e.color, e.rect)
+        e.moveToNextPoint()
+        pygame.draw.rect(screen, e.color, (e.x, e.y, e.width, e.height))
 
     pygame.display.update()
 
