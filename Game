@@ -52,6 +52,10 @@ bulletSpeed = 10
 playerBullets = []
 enemyBullets = []
 
+# keep track of player shot delay
+currentShootAgainDelay = 0
+shootAgainResetValue = 10
+
 # keep track of time passing
 time = 0
 
@@ -132,8 +136,9 @@ class Component():
 
     def draw(self):
         pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height))
-        
 
+    def getRect(self):
+        return pygame.Rect(self.x, self.y, self.width, self.height)
 
 for col in range(0, enemyColumns):
     for row in range(0, enemyRows):
@@ -147,6 +152,7 @@ for col in range(0, enemyColumns):
 # key presses
 keyLeft = False
 keyRight = False
+keySpace = False
 
 # clock
 clock = pygame.time.Clock()
@@ -155,6 +161,7 @@ clock = pygame.time.Clock()
 player = Component(playerX, playerY, playerWidth, playerHeight, playerSpeed, playerColor)
 
 gameOver = False
+
 
 while not gameOver:
     for event in pygame.event.get():
@@ -170,14 +177,16 @@ while not gameOver:
                 keyLeft = True
             if  event.key == pygame.K_RIGHT:
                 keyRight = True
-            if event.key == pygame.K_SPACE:
-                player.shoot('up', playerBullets)
+            if event.key == pygame.K_SPACE and currentShootAgainDelay == 0:
+                keySpace = True
 
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
                 keyLeft = False
             if  event.key == pygame.K_RIGHT:
                 keyRight = False
+            if event.key == pygame.K_SPACE:
+                keySpace = False
 
     #update player position
     if keyLeft and player.x > 0:
@@ -185,6 +194,25 @@ while not gameOver:
     if keyRight and player.x < WIDTH - playerWidth:
         player.x += player.speed
 
+    # update player shooting
+    if keySpace and currentShootAgainDelay == 0:
+        player.shoot('up', playerBullets)
+        currentShootAgainDelay = shootAgainResetValue
+
+    # look for bullet collisions
+    playerRect = player.getRect()
+    for b in enemyBullets:
+        if b.getRect().colliderect(playerRect):
+            gameOver = True
+
+    for b in playerBullets:
+        for e in enemies:
+            # if there is a collision
+            if b.getRect().colliderect(e.getRect()):
+                playerBullets.remove(b)
+                enemies.remove(e)
+
+    # draw graphics
     screen.fill(backgroundColor)
 
     # draw bullets
@@ -218,6 +246,17 @@ while not gameOver:
     time += 1
     print(time)
 
+    # used for shooting delay
+    if currentShootAgainDelay > 0:
+        currentShootAgainDelay -= 1
+
+while gameOver:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            sys.exit()
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                sys.exit()
 
 def randomColor():
     return (random.randrange(255), random.randrange(255), random.randrange(255))
