@@ -1,5 +1,10 @@
 import pygame, sys
 from pygame.locals import *
+import random
+
+# center the window
+import os
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 pygame.init()
 
@@ -8,13 +13,14 @@ WIDTH = 800
 HEIGHT = 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 backgroundColor = (100, 220, 230)
+backgroundColor = (0, 20, 25)
 
 # Setup player
 playerWidth = 50
 playerHeight = 50
 
 playerX = WIDTH//2
-playerY = HEIGHT - 2*playerHeight
+playerY = HEIGHT - 1.5*playerHeight
 
 playerColor = (245, 50, 50)
 playerSpeed = 8
@@ -31,8 +37,22 @@ enemyColor = (50, 250, 50)
 
 enemyGap = enemyWidth
 
+    # create list of enemies
+enemies = []
+
+# create a list of bullets
+bulletWidth = 5
+bulletHeight = 10
+bulletColor = (255, 255, 255)
+bulletSpeed = 10
+
+bullets = []
+
+# keep track of time passing
+time = 0
+
 # create an enemy object to keep track of different attributes
-class Enemy():
+class Component():
     def __init__(self, x, y, width, height, speed, color):
         self.x = x
         self.y = y
@@ -55,7 +75,6 @@ class Enemy():
         self.setupRotatingPoints()
 
     def moveTowards(self, newX, newY):
-        print('newX: ' + str(newX))
         if self.x < newX:
             self.x += self.speed
         elif self.x > newX:
@@ -83,17 +102,41 @@ class Enemy():
         # move towards next point
         self.moveTowards(self.points[self.nextPoint][0], self.points[self.nextPoint][1])
 
-# create list of enemies
-enemies = []
+        # if time < 200:
+        #     self.moveTowards(self.points[self.nextPoint][0], self.points[self.nextPoint][1])
+        # else:
+        #     self.moveTowards(playerX, playerY)
+    
+    def getCenter(self):
+        centerX = self.x + (self.width//2)
+        centerY = self.y + (self.height // 2)
+        return (centerX, centerY)
+        
+    def shoot(self, direction):
+        x = self.getCenter()[0]
+        y = self.getCenter()[1]
+        
+        if direction == 'up':
+            speed = bulletSpeed * -1
+        
+        bullets.append(Component(x, y, bulletWidth, bulletHeight, speed, bulletColor))
+
+    def moveBullet(self):
+        self.y += self.speed
+
+    def draw(self):
+        pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height))
+        
+
 
 for col in range(0, enemyColumns):
     for row in range(0, enemyRows):
-        # enemies.append(Enemy(col*enemyWidth + col*enemyGap + enemyWidth, row*enemyHeight + row*enemyGap + enemyHeight, enemyWidth, enemyHeight, enemySpeed, enemyColor))
+        # enemies.append(Component(col*enemyWidth + col*enemyGap + enemyWidth, row*enemyHeight + row*enemyGap + enemyHeight, enemyWidth, enemyHeight, enemySpeed, enemyColor))
 
         enemyX = col * enemyWidth + col * enemyGap
         enemyY = row * enemyHeight + row * enemyGap
 
-        enemies.append(Enemy(enemyX, enemyY, enemyWidth, enemyHeight, enemySpeed, enemyColor))
+        enemies.append(Component(enemyX, enemyY, enemyWidth, enemyHeight, enemySpeed, enemyColor))
 
 # key presses
 keyLeft = False
@@ -101,6 +144,9 @@ keyRight = False
 
 # clock
 clock = pygame.time.Clock()
+
+# create player
+player = Component(playerX, playerY, playerWidth, playerHeight, playerSpeed, playerColor)
 
 gameOver = False
 
@@ -118,6 +164,9 @@ while not gameOver:
                 keyLeft = True
             if  event.key == pygame.K_RIGHT:
                 keyRight = True
+            if event.key == pygame.K_SPACE:
+                player.shoot('up')
+
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
                 keyLeft = False
@@ -126,21 +175,35 @@ while not gameOver:
 
     #update player position
     if keyLeft and playerX > 0:
-        playerX -= playerSpeed
+        player.x -= player.speed
     if keyRight and playerX < WIDTH - playerWidth:
-        playerX += playerSpeed
+        player.x += player.speed
 
     screen.fill(backgroundColor)
 
+    # draw bullets
+    for b in bullets:
+        b.moveBullet()
+        b.draw()
+
     # draw player
-    pygame.draw.rect(screen, playerColor, (playerX, playerY, playerWidth, playerHeight))
+    pygame.draw.rect(screen, player.color, (player.x, player.y, player.width, player.height))
 
     # draw enemies
     for e in enemies:
         e.moveToNextPoint()
         pygame.draw.rect(screen, e.color, (e.x, e.y, e.width, e.height))
 
+
     pygame.display.update()
 
     # wait
     clock.tick(30)
+
+    # used for score
+    time += 1
+    print(time)
+
+
+def randomColor():
+    return (random.randrange(255), random.randrange(255), random.randrange(255))
