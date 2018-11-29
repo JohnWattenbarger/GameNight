@@ -244,11 +244,15 @@ while not gameOver:
 
     # used for score
     time += 1
-    print(time)
+    print(str(time) + '    ' + str(len(enemies)))
 
     # used for shooting delay
     if currentShootAgainDelay > 0:
         currentShootAgainDelay -= 1
+
+    # end game if no enemies left
+    if len(enemies) == 0:
+        gameOver = True
 
 while gameOver:
     for event in pygame.event.get():
