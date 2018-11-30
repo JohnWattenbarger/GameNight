@@ -10,20 +10,22 @@ pygame.init()
 
 # Set up screen
 WIDTH = 800
-HEIGHT = 600
+HEIGHT = 700
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 backgroundColor = (100, 220, 230)
 backgroundColor = (0, 20, 25)
 
 # Setup player
-playerWidth = 50
-playerHeight = 50
+playerWidth = 100
+playerHeight = 100
 
 playerX = WIDTH//2
 playerY = HEIGHT - 1.5*playerHeight
 
 playerColor = (245, 50, 50)
 playerSpeed = 8
+
+playerImage = pygame.image.load('images/claude.png')
 
 # Setup enemies
 enemyColumns = 8
@@ -37,8 +39,7 @@ enemyColor = (50, 250, 50)
 
 enemyGap = enemyWidth
 
-# 1 / chanceToShoot  is the % likelihood that each enemy will shoot per frame
-chanceToShoot = 100
+enemyImage = pygame.image.load('images/volleyball.png')
 
     # create list of enemies
 enemies = []
@@ -54,7 +55,25 @@ enemyBullets = []
 
 # keep track of player shot delay
 currentShootAgainDelay = 0
-shootAgainResetValue = 10
+shootAgainResetValue = 15
+shootAgainResetDefaultValue = shootAgainResetValue
+
+# create powerUps
+powerUpWidth = 40
+powerUpHeight = 40
+powerUpColor = (230, 230, 200)
+powerUpSpeed = 8
+
+powerUpTimeRemaining = 0
+powerUpResetValue = 80
+
+# 1 / chanceToShoot  is the % likelihood that each enemy will shoot per frame
+chanceToShoot = 200
+chanceToDropPowerUp = 5
+
+powerUpImage = pygame.image.load('images/beer.png')
+
+powerUps = []
 
 # keep track of time passing
 time = 0
@@ -131,6 +150,13 @@ class Component():
         
         list.append(Component(x, y, bulletWidth, bulletHeight, speed, bulletColor))
 
+    def dropPowerUp(self):
+        x = self.getCenter()[0]
+        y = self.getCenter()[1]
+
+        powerUps.append(Component(x, y, powerUpWidth, powerUpHeight, powerUpSpeed, powerUpColor))
+        powerUps[-1].setImage(powerUpImage)
+
     def moveBullet(self):
         self.y += self.speed
 
@@ -140,6 +166,12 @@ class Component():
     def getRect(self):
         return pygame.Rect(self.x, self.y, self.width, self.height)
 
+    def setImage(self, image):
+        self.image = pygame.transform.scale(image, (self.width, self.height))
+
+    def drawImage(self):
+        screen.blit(self.image, self.getRect())
+
 for col in range(0, enemyColumns):
     for row in range(0, enemyRows):
         # enemies.append(Component(col*enemyWidth + col*enemyGap + enemyWidth, row*enemyHeight + row*enemyGap + enemyHeight, enemyWidth, enemyHeight, enemySpeed, enemyColor))
@@ -147,7 +179,11 @@ for col in range(0, enemyColumns):
         enemyX = col * enemyWidth + col * enemyGap
         enemyY = row * enemyHeight + row * enemyGap
 
-        enemies.append(Component(enemyX, enemyY, enemyWidth, enemyHeight, enemySpeed, enemyColor))
+        enemies.append(Component(enemyX, enemyY, int(enemyWidth), int(enemyHeight), enemySpeed, enemyColor))
+
+# set enemy image
+for e in enemies:
+    e.setImage(enemyImage)
 
 # key presses
 keyLeft = False
@@ -159,6 +195,7 @@ clock = pygame.time.Clock()
 
 # create player
 player = Component(playerX, playerY, playerWidth, playerHeight, playerSpeed, playerColor)
+player.setImage(playerImage)
 
 gameOver = False
 
@@ -209,8 +246,40 @@ while not gameOver:
         for e in enemies:
             # if there is a collision
             if b.getRect().colliderect(e.getRect()):
+                # determine if an enemy will drop a powerUp
+                randomNumber = random.randrange(chanceToDropPowerUp)
+                if randomNumber == 0:
+                    e.dropPowerUp()
+                # remove bullet and enemy
                 playerBullets.remove(b)
                 enemies.remove(e)
+
+    # look for powerUp collisions
+        # already got playerRect above
+    for p in powerUps:
+        if p.getRect().colliderect(playerRect):
+            powerUpTimeRemaining = powerUpResetValue
+            powerUps.remove(p)
+
+    # add powerUpEffect
+    if powerUpTimeRemaining > 0:
+        player.height = playerHeight//2
+        player.width = playerWidth//2
+        player.setImage(playerImage)
+
+        player.speed = powerUpSpeed
+        shootAgainResetValue = 6
+    else:
+        player.height = playerHeight
+        player.width = playerWidth
+        player.setImage(playerImage)
+
+        player.speed = playerSpeed
+        shootAgainResetValue = shootAgainResetDefaultValue
+
+    # decrement powerUpTimeRemaining
+    if powerUpTimeRemaining > 0:
+        powerUpTimeRemaining -= 1
 
     # draw graphics
     screen.fill(backgroundColor)
@@ -223,19 +292,24 @@ while not gameOver:
         b.moveBullet()
         b.draw()
 
+    # draw powerUps
+    for p in powerUps:
+        p.moveBullet()
+        p.drawImage()
+
     # draw player
-    pygame.draw.rect(screen, player.color, (player.x, player.y, player.width, player.height))
+    player.drawImage()
 
     # draw enemies
     for e in enemies:
         e.moveToNextPoint()
-        pygame.draw.rect(screen, e.color, (e.x, e.y, e.width, e.height))
+        # draw enemies
+        e.drawImage()
 
         # determine if an enemy will shoot
         randomNumber = random.randrange(chanceToShoot)
         if randomNumber == 0:
             e.shoot('down', enemyBullets)
-
 
     pygame.display.update()
 
