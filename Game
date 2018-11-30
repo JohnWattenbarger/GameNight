@@ -71,7 +71,7 @@ powerUpResetValue = 80
 chanceToShoot = 200
 chanceToDropPowerUp = 5
 
-powerUpImage = pygame.image.load('images/beer.png')
+powerUpImage = pygame.image.load('images/whiskey.png')
 
 powerUps = []
 
