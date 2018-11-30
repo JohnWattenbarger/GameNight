@@ -75,6 +75,12 @@ powerUpImage = pygame.image.load('images/beer.png')
 
 powerUps = []
 
+# add sound
+powerUpSound = pygame.mixer.Sound('sounds/powerup.ogg')
+pygame.mixer.music.load('sounds/background.ogg')
+    # play forever
+pygame.mixer.music.play(-1, 0.0)
+
 # keep track of time passing
 time = 0
 
@@ -260,6 +266,7 @@ while not gameOver:
         if p.getRect().colliderect(playerRect):
             powerUpTimeRemaining = powerUpResetValue
             powerUps.remove(p)
+            powerUpSound.play()
 
     # add powerUpEffect
     if powerUpTimeRemaining > 0:
@@ -327,6 +334,10 @@ while not gameOver:
     # end game if no enemies left
     if len(enemies) == 0:
         gameOver = True
+
+# After the game ends
+pygame.mixer.music.fadeout(2000)
+
 
 while gameOver:
     for event in pygame.event.get():

@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6ccd8d1b-e6fb-46ec-a33a-2012df822157" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Game" beforeDir="false" afterPath="$PROJECT_DIR$/Game" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,8 +16,8 @@
       <file leaf-file-name="Game" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Game">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="331">
-              <caret line="281" column="33" selection-start-line="281" selection-start-column="33" selection-end-line="281" selection-end-column="33" />
+            <state relative-caret-position="123">
+              <caret line="338" column="28" selection-start-line="338" selection-start-column="28" selection-end-line="338" selection-end-column="28" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -51,9 +50,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-15" />
-    <option name="y" value="-15" />
-    <option name="width" value="1628" />
+    <option name="x" value="867" />
+    <option name="y" value="-25" />
+    <option name="width" value="1630" />
     <option name="height" value="1715" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -72,7 +71,7 @@
             <path>
               <item name="GameNight" type="b2602c69:ProjectViewProjectNode" />
               <item name="GameNight" type="462c0819:PsiDirectoryNode" />
-              <item name="images" type="462c0819:PsiDirectoryNode" />
+              <item name="sounds" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="GameNight" type="b2602c69:ProjectViewProjectNode" />
@@ -143,7 +142,7 @@
     <frame x="-6" y="-6" width="1293" height="693" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="1" weight="0.2154213" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.104928456" />
       <window_info anchor="bottom" id="TODO" order="10" />
       <window_info anchor="bottom" id="Event Log" order="2" side_tool="true" />
       <window_info active="true" anchor="bottom" id="Run" order="6" visible="true" weight="0.22947761" />
@@ -198,8 +197,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Game">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="331">
-          <caret line="281" column="33" selection-start-line="281" selection-start-column="33" selection-end-line="281" selection-end-column="33" />
+        <state relative-caret-position="123">
+          <caret line="338" column="28" selection-start-line="338" selection-start-column="28" selection-end-line="338" selection-end-column="28" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
