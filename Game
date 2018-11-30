@@ -15,6 +15,10 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 backgroundColor = (100, 220, 230)
 backgroundColor = (0, 20, 25)
 
+    # add background image
+backgroundImage = pygame.image.load('images/background2.jpg')
+backgroundImage = pygame.transform.scale(backgroundImage, (WIDTH, HEIGHT))
+
 # Setup player
 playerWidth = 100
 playerHeight = 100
@@ -77,7 +81,8 @@ powerUps = []
 
 # add sound
 powerUpSound = pygame.mixer.Sound('sounds/powerup.ogg')
-pygame.mixer.music.load('sounds/background.ogg')
+# pygame.mixer.music.load('sounds/background.ogg')
+pygame.mixer.music.load('sounds/goToTown.mp3')
     # play forever
 pygame.mixer.music.play(-1, 0.0)
 
@@ -288,8 +293,11 @@ while not gameOver:
     if powerUpTimeRemaining > 0:
         powerUpTimeRemaining -= 1
 
-    # draw graphics
+# draw graphics
+
+    # screen background
     screen.fill(backgroundColor)
+    screen.blit(backgroundImage, (0, 0, WIDTH, HEIGHT))
 
     # draw bullets
     for b in enemyBullets:
