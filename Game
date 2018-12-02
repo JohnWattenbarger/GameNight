@@ -1,9 +1,15 @@
 # Last update:
-#   - added a victory animation
+#   - updated victoryAnimation
+#       > now includes a cape and whiskey bottle
+#       > images grow in size
 #
 # Next update:
 #   - add a displayMessage() function
-#   - finish victoryAnimation() to make Claude grow and have a cape
+#   - add a victory screen
+#       > add stats (score, accuracy, time, whiskey drunk, etc.
+#   - add a defeat screen
+#   - add different levels
+#   - add a menu
 
 import pygame, sys
 from pygame.locals import *
@@ -73,6 +79,8 @@ bulletHeight = 10
 bulletColor = (255, 255, 255)
 bulletSpeed = 10
 
+enemyBulletColor = (140, 255, 20)
+
 playerBullets = []
 enemyBullets = []
 
@@ -100,8 +108,9 @@ powerUps = []
 
 # add sound
 powerUpSound = pygame.mixer.Sound('sounds/powerup.ogg')
-pygame.mixer.music.load('sounds/background.ogg')
+# pygame.mixer.music.load('sounds/background.ogg')
 # pygame.mixer.music.load('sounds/goToTown.mp3')
+pygame.mixer.music.load('sounds/moo.mp3')
     # play forever
 pygame.mixer.music.play(-1, 0.0)
 
@@ -240,6 +249,11 @@ class Component():
 
 
 def victoryAnimation():
+    # make sure player is normal sized
+    player.width = playerWidth
+    player.height = playerHeight
+    player.setImage(playerImage)
+
     growScale = 3
     whiskeyGrowScale = 2
     growSpeed = 3
@@ -397,7 +411,7 @@ while not gameOver:
                     enemies.remove(e)
 
                     # test
-                    enemies = []
+                    # enemies = []
 
         # look for powerUp collisions
             # already got playerRect above
@@ -436,7 +450,7 @@ while not gameOver:
         # draw bullets
         for b in enemyBullets:
             # test
-            b.color = (255, 0, 0)
+            b.color = enemyBulletColor
             b.moveBullet()
             b.draw()
         for b in playerBullets:

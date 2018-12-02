@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6ccd8d1b-e6fb-46ec-a33a-2012df822157" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Game" beforeDir="false" afterPath="$PROJECT_DIR$/Game" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +17,8 @@
       <file leaf-file-name="Game" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Game">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="144">
-              <caret line="292" column="41" selection-start-line="292" selection-start-column="41" selection-end-line="292" selection-end-column="41" />
+            <state relative-caret-position="-8329">
+              <caret line="11" column="16" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -35,6 +36,7 @@
       <find>playerX</find>
       <find>playerY</find>
       <find>image</find>
+      <find>test</find>
     </findStrings>
     <replaceStrings>
       <replace>Component</replace>
@@ -72,7 +74,7 @@
             <path>
               <item name="GameNight" type="b2602c69:ProjectViewProjectNode" />
               <item name="GameNight" type="462c0819:PsiDirectoryNode" />
-              <item name="images" type="462c0819:PsiDirectoryNode" />
+              <item name="sounds" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="GameNight" type="b2602c69:ProjectViewProjectNode" />
@@ -218,8 +220,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Game">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="292" column="41" selection-start-line="292" selection-start-column="41" selection-end-line="292" selection-end-column="41" />
+        <state relative-caret-position="-8329">
+          <caret line="11" column="16" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
