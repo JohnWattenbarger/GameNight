@@ -1,3 +1,10 @@
+# Last update:
+#   - added a victory animation
+#
+# Next update:
+#   - add a displayMessage() function
+#   - finish victoryAnimation() to make Claude grow and have a cape
+
 import pygame, sys
 from pygame.locals import *
 import random
@@ -97,6 +104,10 @@ pygame.mixer.music.load('sounds/background.ogg')
 # pygame.mixer.music.load('sounds/goToTown.mp3')
     # play forever
 pygame.mixer.music.play(-1, 0.0)
+
+# other images
+capeImage = pygame.image.load('images/cape.png')
+whiskeyImage = pygame.image.load('images/whiskey.png')
 
 # keep track of time passing
 time = 0
@@ -209,14 +220,47 @@ def victoryAnimation():
     newX = WIDTH//2 - player.width//2
     newY = HEIGHT//2 - player.height//2
 
-    while player.x != newX or player.y != newY:
+    # create a cape
+    capeX = WIDTH-130
+    capeY = 0
+    capeWidth = playerWidth
+    capeHeight = playerHeight
+    capeSpeed = 3
+    capeColor = (255, 0, 0)
+    cape = Component(capeX, capeY, capeWidth, capeHeight, capeSpeed, capeColor)
+    cape.setImage(capeImage)
+
+    # create a whiskey bottle
+    whiskeyX = 25
+    whiskeyY = 0
+    whiskeyWidth = powerUpWidth
+    whiskeyHeight = powerUpHeight
+    whiskeySpeed = 3
+    whiskeyColor = (0,0,0)
+    whiskey = Component(whiskeyX, whiskeyY, whiskeyWidth, whiskeyHeight, whiskeySpeed, whiskeyColor)
+    whiskey.setImage(whiskeyImage)
+
+    # temporarily change speed for animation
+    player.speed = 3
+
+    # move player to center of screen
+    while (player.x != newX or player.y != newY) or (cape.x != newX or cape.y != newY):
         screen.fill(backgroundColor)
         screen.blit(backgroundImage, (0, 0, WIDTH, HEIGHT))
+
+        cape.moveTowards(newX, newY)
+        cape.drawImage()
 
         player.moveTowards(newX, newY)
         player.drawImage()
 
+        whiskey.moveTowards(newX-13, newY+1)
+        whiskey.drawImage()
+
         pygame.display.update()
+
+    # change speed back
+    player.speed = playerSpeed
 
 for col in range(0, enemyColumns):
     for row in range(0, enemyRows):
