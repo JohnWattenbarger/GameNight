@@ -16,8 +16,8 @@
       <file leaf-file-name="Game" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Game">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="79">
-              <caret line="240" column="34" lean-forward="true" selection-start-line="240" selection-start-column="34" selection-end-line="240" selection-end-column="34" />
+            <state relative-caret-position="144">
+              <caret line="292" column="41" selection-start-line="292" selection-start-column="41" selection-end-line="292" selection-end-column="41" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -218,8 +218,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Game">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="79">
-          <caret line="240" column="34" lean-forward="true" selection-start-line="240" selection-start-column="34" selection-end-line="240" selection-end-column="34" />
+        <state relative-caret-position="144">
+          <caret line="292" column="41" selection-start-line="292" selection-start-column="41" selection-end-line="292" selection-end-column="41" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

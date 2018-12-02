@@ -216,45 +216,95 @@ class Component():
     def drawImage(self):
         screen.blit(self.image, self.getRect())
 
+    def changeToSize(self, newWidth, newHeight, growSpeed):
+        widthDifference = abs(self.width - newWidth)
+        heightDifference = abs(self.height - newHeight)
+
+        if widthDifference > 0:
+            if widthDifference < growSpeed:
+                widthGrowSpeed = 1
+            else:
+                widthGrowSpeed = growSpeed
+            if self.width > newWidth:
+                widthGrowSpeed *= -1
+            self.width += widthGrowSpeed
+
+        if heightDifference > 0:
+            if heightDifference < growSpeed:
+                heightGrowSpeed = 1
+            else:
+                heightGrowSpeed = growSpeed
+            if self.height > newHeight:
+                heightGrowSpeed *= -1
+            self.height += heightGrowSpeed
+
+
 def victoryAnimation():
-    newX = WIDTH//2 - player.width//2
-    newY = HEIGHT//2 - player.height//2
+    growScale = 3
+    whiskeyGrowScale = 2
+    growSpeed = 3
+
+    newPlayerWidth = player.width*growScale
+    newPlayerHeight = player.height*growScale
+
+    newX = WIDTH//2 - newPlayerWidth//2
+    newY = HEIGHT//2 - newPlayerHeight//2
 
     # create a cape
     capeX = WIDTH-130
     capeY = 0
     capeWidth = playerWidth
     capeHeight = playerHeight
-    capeSpeed = 3
+    capeSpeed = 6
     capeColor = (255, 0, 0)
     cape = Component(capeX, capeY, capeWidth, capeHeight, capeSpeed, capeColor)
     cape.setImage(capeImage)
+
+    newCapeWidth = cape.width*growScale
+    newCapeHeight = cape.height*growScale
 
     # create a whiskey bottle
     whiskeyX = 25
     whiskeyY = 0
     whiskeyWidth = powerUpWidth
     whiskeyHeight = powerUpHeight
-    whiskeySpeed = 3
+    whiskeySpeed = 5
     whiskeyColor = (0,0,0)
     whiskey = Component(whiskeyX, whiskeyY, whiskeyWidth, whiskeyHeight, whiskeySpeed, whiskeyColor)
     whiskey.setImage(whiskeyImage)
 
+    newWhiskeyWidth = whiskey.width*whiskeyGrowScale
+    newWhiskeyHeight = whiskey.height*whiskeyGrowScale
+
     # temporarily change speed for animation
-    player.speed = 3
+    player.speed = 5
 
     # move player to center of screen
     while (player.x != newX or player.y != newY) or (cape.x != newX or cape.y != newY):
         screen.fill(backgroundColor)
         screen.blit(backgroundImage, (0, 0, WIDTH, HEIGHT))
 
+        # grow images
+        if cape.width != newCapeWidth or cape.height != newCapeHeight:
+            cape.changeToSize(newCapeWidth, newCapeHeight, growSpeed)
+            cape.setImage(capeImage)
+
+        if whiskey.width != newWhiskeyWidth or whiskey.height != newWhiskeyHeight:
+            whiskey.changeToSize(newWhiskeyWidth, newWhiskeyHeight, growSpeed)
+            whiskey.setImage(whiskeyImage)
+
+        if player.width != newPlayerWidth or player.height != newPlayerHeight:
+            player.changeToSize(newPlayerWidth, newPlayerHeight, growSpeed)
+            player.setImage(playerImage)
+
+        # move/draw images
         cape.moveTowards(newX, newY)
         cape.drawImage()
 
         player.moveTowards(newX, newY)
         player.drawImage()
 
-        whiskey.moveTowards(newX-13, newY+1)
+        whiskey.moveTowards(newX - 13*whiskeyGrowScale, newY+whiskeyGrowScale)
         whiskey.drawImage()
 
         pygame.display.update()
