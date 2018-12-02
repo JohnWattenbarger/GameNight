@@ -15,6 +15,18 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 backgroundColor = (100, 220, 230)
 backgroundColor = (0, 20, 25)
 
+# set icon
+iconWidth = 32
+iconHeight = 32
+iconImage = pygame.image.load('images/claude.png')
+iconImage = pygame.transform.scale(iconImage, (iconWidth, iconHeight))
+pygame.display.set_icon(iconImage)
+
+# set window name
+gameName = 'Claude'
+pygame.display.set_caption(gameName)
+
+
     # add background image
 backgroundImage = pygame.image.load('images/background2.jpg')
 backgroundImage = pygame.transform.scale(backgroundImage, (WIDTH, HEIGHT))
@@ -81,8 +93,8 @@ powerUps = []
 
 # add sound
 powerUpSound = pygame.mixer.Sound('sounds/powerup.ogg')
-# pygame.mixer.music.load('sounds/background.ogg')
-pygame.mixer.music.load('sounds/goToTown.mp3')
+pygame.mixer.music.load('sounds/background.ogg')
+# pygame.mixer.music.load('sounds/goToTown.mp3')
     # play forever
 pygame.mixer.music.play(-1, 0.0)
 
@@ -113,15 +125,30 @@ class Component():
         self.setupRotatingPoints()
 
     def moveTowards(self, newX, newY):
+        xDifference = abs(self.x - newX)
+        yDifference = abs(self.y - newY)
+
         if self.x < newX:
-            self.x += self.speed
+            if xDifference < self.speed:
+                self.x += 1
+            else:
+                self.x += self.speed
         elif self.x > newX:
-            self.x -= self.speed
+            if xDifference < self.speed:
+                self.x -= 1
+            else:
+                self.x -= self.speed
 
         if self.y < newY:
-            self.y += self.speed
+            if yDifference < self.speed:
+                self.y += 1
+            else:
+                self.y += self.speed
         elif self.y > newY:
-            self.y -= self.speed
+            if yDifference < self.speed:
+                self.y -= 1
+            else:
+                self.y -= self.speed
 
     def setupRotatingPoints(self):
         self.points.append((self.startingX, self.startingY))
@@ -139,11 +166,6 @@ class Component():
 
         # move towards next point
         self.moveTowards(self.points[self.nextPoint][0], self.points[self.nextPoint][1])
-
-        # if time < 100:
-        #     self.moveTowards(self.points[self.nextPoint][0], self.points[self.nextPoint][1])
-        # else:
-        #     self.moveTowards(player.x, player.y)
     
     def getCenter(self):
         centerX = self.x + (self.width//2)
@@ -183,6 +205,19 @@ class Component():
     def drawImage(self):
         screen.blit(self.image, self.getRect())
 
+def victoryAnimation():
+    newX = WIDTH//2 - player.width//2
+    newY = HEIGHT//2 - player.height//2
+
+    while player.x != newX or player.y != newY:
+        screen.fill(backgroundColor)
+        screen.blit(backgroundImage, (0, 0, WIDTH, HEIGHT))
+
+        player.moveTowards(newX, newY)
+        player.drawImage()
+
+        pygame.display.update()
+
 for col in range(0, enemyColumns):
     for row in range(0, enemyRows):
         # enemies.append(Component(col*enemyWidth + col*enemyGap + enemyWidth, row*enemyHeight + row*enemyGap + enemyHeight, enemyWidth, enemyHeight, enemySpeed, enemyColor))
@@ -209,138 +244,151 @@ player = Component(playerX, playerY, playerWidth, playerHeight, playerSpeed, pla
 player.setImage(playerImage)
 
 gameOver = False
+levelComplete = False
 
 
 while not gameOver:
-    for event in pygame.event.get():
-        # test
-        # print(event)
+    if not levelComplete:
+        for event in pygame.event.get():
+            # test
+            # print(event)
 
-        if event.type == pygame.QUIT:
-            sys.exit()
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
+            if event.type == pygame.QUIT:
                 sys.exit()
-            if event.key == pygame.K_LEFT:
-                keyLeft = True
-            if  event.key == pygame.K_RIGHT:
-                keyRight = True
-            if event.key == pygame.K_SPACE and currentShootAgainDelay == 0:
-                keySpace = True
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    sys.exit()
+                if event.key == pygame.K_LEFT:
+                    keyLeft = True
+                if  event.key == pygame.K_RIGHT:
+                    keyRight = True
+                if event.key == pygame.K_SPACE and currentShootAgainDelay == 0:
+                    keySpace = True
 
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
-                keyLeft = False
-            if  event.key == pygame.K_RIGHT:
-                keyRight = False
-            if event.key == pygame.K_SPACE:
-                keySpace = False
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT:
+                    keyLeft = False
+                if  event.key == pygame.K_RIGHT:
+                    keyRight = False
+                if event.key == pygame.K_SPACE:
+                    keySpace = False
 
-    #update player position
-    if keyLeft and player.x > 0:
-        player.x -= player.speed
-    if keyRight and player.x < WIDTH - playerWidth:
-        player.x += player.speed
+        #update player position
+        if keyLeft and player.x > 0:
+            player.x -= player.speed
+        if keyRight and player.x < WIDTH - playerWidth:
+            player.x += player.speed
 
-    # update player shooting
-    if keySpace and currentShootAgainDelay == 0:
-        player.shoot('up', playerBullets)
-        currentShootAgainDelay = shootAgainResetValue
+        # update player shooting
+        if keySpace and currentShootAgainDelay == 0:
+            player.shoot('up', playerBullets)
+            currentShootAgainDelay = shootAgainResetValue
 
-    # look for bullet collisions
-    playerRect = player.getRect()
-    for b in enemyBullets:
-        if b.getRect().colliderect(playerRect):
-            gameOver = True
+        # look for bullet collisions
+        playerRect = player.getRect()
+        for b in enemyBullets:
+            if b.getRect().colliderect(playerRect):
+                gameOver = True
 
-    for b in playerBullets:
-        for e in enemies:
-            # if there is a collision
-            if b.getRect().colliderect(e.getRect()):
-                # determine if an enemy will drop a powerUp
-                randomNumber = random.randrange(chanceToDropPowerUp)
-                if randomNumber == 0:
-                    e.dropPowerUp()
-                # remove bullet and enemy
-                playerBullets.remove(b)
-                enemies.remove(e)
+        for b in playerBullets:
+            for e in enemies:
+                # if there is a collision
+                if b.getRect().colliderect(e.getRect()):
+                    # determine if an enemy will drop a powerUp
+                    randomNumber = random.randrange(chanceToDropPowerUp)
+                    if randomNumber == 0:
+                        e.dropPowerUp()
+                    # remove bullet and enemy
+                    playerBullets.remove(b)
+                    enemies.remove(e)
 
-    # look for powerUp collisions
-        # already got playerRect above
-    for p in powerUps:
-        if p.getRect().colliderect(playerRect):
-            powerUpTimeRemaining = powerUpResetValue
-            powerUps.remove(p)
-            powerUpSound.play()
+                    # test
+                    enemies = []
 
-    # add powerUpEffect
-    if powerUpTimeRemaining > 0:
-        player.height = playerHeight//2
-        player.width = playerWidth//2
-        player.setImage(playerImage)
+        # look for powerUp collisions
+            # already got playerRect above
+        for p in powerUps:
+            if p.getRect().colliderect(playerRect):
+                powerUpTimeRemaining = powerUpResetValue
+                powerUps.remove(p)
+                powerUpSound.play()
 
-        player.speed = powerUpSpeed
-        shootAgainResetValue = 6
-    else:
-        player.height = playerHeight
-        player.width = playerWidth
-        player.setImage(playerImage)
+        # add powerUpEffect
+        if powerUpTimeRemaining > 0:
+            player.height = playerHeight//2
+            player.width = playerWidth//2
+            player.setImage(playerImage)
 
-        player.speed = playerSpeed
-        shootAgainResetValue = shootAgainResetDefaultValue
+            player.speed = powerUpSpeed
+            shootAgainResetValue = 6
+        else:
+            player.height = playerHeight
+            player.width = playerWidth
+            player.setImage(playerImage)
 
-    # decrement powerUpTimeRemaining
-    if powerUpTimeRemaining > 0:
-        powerUpTimeRemaining -= 1
+            player.speed = playerSpeed
+            shootAgainResetValue = shootAgainResetDefaultValue
 
-# draw graphics
+        # decrement powerUpTimeRemaining
+        if powerUpTimeRemaining > 0:
+            powerUpTimeRemaining -= 1
 
-    # screen background
-    screen.fill(backgroundColor)
-    screen.blit(backgroundImage, (0, 0, WIDTH, HEIGHT))
+    # draw graphics
 
-    # draw bullets
-    for b in enemyBullets:
-        b.moveBullet()
-        b.draw()
-    for b in playerBullets:
-        b.moveBullet()
-        b.draw()
+        # screen background
+        screen.fill(backgroundColor)
+        screen.blit(backgroundImage, (0, 0, WIDTH, HEIGHT))
 
-    # draw powerUps
-    for p in powerUps:
-        p.moveBullet()
-        p.drawImage()
+        # draw bullets
+        for b in enemyBullets:
+            # test
+            b.color = (255, 0, 0)
+            b.moveBullet()
+            b.draw()
+        for b in playerBullets:
+            b.moveBullet()
+            b.draw()
 
-    # draw player
-    player.drawImage()
+        # draw powerUps
+        for p in powerUps:
+            p.moveBullet()
+            p.drawImage()
 
-    # draw enemies
-    for e in enemies:
-        e.moveToNextPoint()
+        # draw player
+        player.drawImage()
+
         # draw enemies
-        e.drawImage()
+        for e in enemies:
+            e.moveToNextPoint()
+            # draw enemies
+            e.drawImage()
 
-        # determine if an enemy will shoot
-        randomNumber = random.randrange(chanceToShoot)
-        if randomNumber == 0:
-            e.shoot('down', enemyBullets)
+            # determine if an enemy will shoot
+            randomNumber = random.randrange(chanceToShoot)
+            if randomNumber == 0:
+                e.shoot('down', enemyBullets)
 
-    pygame.display.update()
+        pygame.display.update()
 
-    # wait
-    clock.tick(30)
+        # wait
+        clock.tick(30)
 
-    # used for score
-    time += 1
-    print(str(time) + '    ' + str(len(enemies)))
+        # used for score
+        time += 1
 
-    # used for shooting delay
-    if currentShootAgainDelay > 0:
-        currentShootAgainDelay -= 1
+        # test
+        print(str(time) + '    ' + str(len(enemies)))
 
-    # end game if no enemies left
-    if len(enemies) == 0:
+        # used for shooting delay
+        if currentShootAgainDelay > 0:
+            currentShootAgainDelay -= 1
+
+        # end game if no enemies left
+        if len(enemies) == 0:
+            levelComplete = True
+
+    if levelComplete:
+        victoryAnimation()
         gameOver = True
 
 # After the game ends
