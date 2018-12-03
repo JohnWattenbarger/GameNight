@@ -59,9 +59,74 @@ playerImage = pygame.image.load('images/claude.png')
 # Setup enemies
 enemyColumns = 8
 enemyRows = 3
+enemyMoveDistance = 50
 
-enemyWidth = WIDTH / (enemyColumns) / 2
-enemyHeight = 40
+    # determine max height and width
+maxRowHeight = HEIGHT*3//5 - enemyMoveDistance
+maxColumnWidth = WIDTH - enemyMoveDistance
+
+minGapSize = 5
+minWidth = 5
+minHeight = 5
+maxColumns = maxColumnWidth // (minWidth + minGapSize)
+maxRows = maxRowHeight // (minHeight + minGapSize)
+
+# determine max allowed height and width
+enemyWidth = maxColumnWidth // (enemyColumns*2 - 1)
+enemyHeight = maxRowHeight // (enemyRows*2 - 1)
+enemyGapWidth = enemyWidth
+enemyGapHeight = enemyHeight
+
+if enemyWidth < enemyHeight:
+    # enemyGapHeight = enemyGapHeight + (enemyHeight - enemyWidth)
+    enemyGapHeight = enemyGapWidth
+
+    enemyHeight = enemyWidth
+else:
+    enemyGapWidth = enemyGapWidth + (enemyWidth - enemyHeight)
+    # enemyGapWidth = enemyGapHeight
+
+    enemyWidth = enemyHeight
+
+    # setup actual height and width
+# if maxColumnWidth < maxRowHeight:
+#     enemyWidth = maxColumnWidth // (enemyColumns*2 - enemyColumns)
+#     enemyGapWidth = enemyWidth
+#
+#     enemyHeight = enemyWidth
+#     enemyGapHeight = maxRowHeight // enemyRows - enemyHeight
+# else:
+#     enemyHeight = maxRowHeight // enemyRows // 2
+#     enemyGapHeight = enemyHeight
+#
+#     enemyWidth = enemyHeight
+#     enemyGapWidth = maxColumnWidth // enemyColumns - enemyWidth
+
+# test
+print('******* width ********')
+print('WIDTH: ' + str(WIDTH))
+print('enemyColumns: ' + str(enemyColumns))
+print('maxColumns: ' + str(maxColumns))
+print('enemyMoveDistance: ' + str(enemyMoveDistance))
+print('maxColumnWidth: ' + str(maxColumnWidth))
+print('enemyWidth: ' + str(enemyWidth))
+print('enemyGapWidth: ' + str(enemyGapWidth))
+print()
+
+print('******* height ********')
+print('HEIGHT: ' + str(HEIGHT))
+print('enemyRows: ' + str(enemyRows))
+print('maxRows: ' + str(maxRows))
+print('enemyMoveDistance: ' + str(enemyMoveDistance))
+print('maxRowHeight: ' + str(maxRowHeight))
+print('enemyHeight: ' + str(enemyHeight))
+print('enemyGapHeight: ' + str(enemyGapHeight))
+print()
+
+
+
+# enemyWidth = WIDTH / (enemyColumns) / 2
+# enemyHeight = 40
 
 enemySpeed = 5
 enemyColor = (50, 250, 50)
@@ -139,7 +204,7 @@ class Component():
         self.startingX = x
         self.startingY = y
 
-        self.moveDistance = 50
+        self.moveDistance = enemyMoveDistance
         self.nextPoint = 0
 
         self.setupRotatingPoints()
@@ -263,13 +328,15 @@ def victoryAnimation():
 
     newX = WIDTH//2 - newPlayerWidth//2
     newY = HEIGHT//2 - newPlayerHeight//2
+    newPlayerSpeed = 5
 
     # create a cape
-    capeX = WIDTH-130
-    capeY = 0
+    # capeX = WIDTH-130
+    capeX = WIDTH//2 + abs(player.x - WIDTH//2)
+    capeY = HEIGHT//2 - abs(player.y - HEIGHT//2)
     capeWidth = playerWidth
     capeHeight = playerHeight
-    capeSpeed = 6
+    capeSpeed = newPlayerSpeed
     capeColor = (255, 0, 0)
     cape = Component(capeX, capeY, capeWidth, capeHeight, capeSpeed, capeColor)
     cape.setImage(capeImage)
@@ -291,7 +358,7 @@ def victoryAnimation():
     newWhiskeyHeight = whiskey.height*whiskeyGrowScale
 
     # temporarily change speed for animation
-    player.speed = 5
+    player.speed = newPlayerSpeed
 
     # move player to center of screen
     while (player.x != newX or player.y != newY) or (cape.x != newX or cape.y != newY):
@@ -312,7 +379,10 @@ def victoryAnimation():
             player.setImage(playerImage)
 
         # move/draw images
-        cape.moveTowards(newX, newY)
+        if player.x < WIDTH // 2:
+            cape.moveTowards(newX, newY)
+        else:
+            cape.moveTowards(player.x, player.y)
         cape.drawImage()
 
         player.moveTowards(newX, newY)
@@ -326,12 +396,13 @@ def victoryAnimation():
     # change speed back
     player.speed = playerSpeed
 
+# create enemies list
 for col in range(0, enemyColumns):
     for row in range(0, enemyRows):
         # enemies.append(Component(col*enemyWidth + col*enemyGap + enemyWidth, row*enemyHeight + row*enemyGap + enemyHeight, enemyWidth, enemyHeight, enemySpeed, enemyColor))
 
-        enemyX = col * enemyWidth + col * enemyGap
-        enemyY = row * enemyHeight + row * enemyGap
+        enemyX = col * enemyWidth + col * enemyGapWidth
+        enemyY = row * enemyHeight + row * enemyGapHeight
 
         enemies.append(Component(enemyX, enemyY, int(enemyWidth), int(enemyHeight), enemySpeed, enemyColor))
 
@@ -407,7 +478,8 @@ while not gameOver:
                     if randomNumber == 0:
                         e.dropPowerUp()
                     # remove bullet and enemy
-                    playerBullets.remove(b)
+                    if playerBullets.__contains__(b):
+                        playerBullets.remove(b)
                     enemies.remove(e)
 
                     # test
@@ -485,7 +557,7 @@ while not gameOver:
         time += 1
 
         # test
-        print(str(time) + '    ' + str(len(enemies)))
+        # print(str(time) + '    ' + str(len(enemies)))
 
         # used for shooting delay
         if currentShootAgainDelay > 0:
