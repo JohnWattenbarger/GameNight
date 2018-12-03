@@ -1,9 +1,8 @@
 # Last update:
-#   - updated victoryAnimation
-#       > now includes a cape and whiskey bottle
-#       > images grow in size
+#   - changed enemy row and columns sizes to allow for different numbers to be used
 #
 # Next update:
+#   - test victoryAnimation() where Claude moves, then the cape and whiskey come
 #   - add a displayMessage() function
 #   - add a victory screen
 #       > add stats (score, accuracy, time, whiskey drunk, etc.
@@ -71,6 +70,16 @@ minHeight = 5
 maxColumns = maxColumnWidth // (minWidth + minGapSize)
 maxRows = maxRowHeight // (minHeight + minGapSize)
 
+# reset enemyColumns and enemyRows if they are too big/small
+if enemyRows <= 0:
+    enemyRows = 1
+if enemyRows > maxRows:
+    enemyRows = maxRows
+if enemyColumns <= 0:
+    enemyRows = 1
+if enemyColumns > maxColumns:
+    enemyColumns = maxColumns
+
 # determine max allowed height and width
 enemyWidth = maxColumnWidth // (enemyColumns*2 - 1)
 enemyHeight = maxRowHeight // (enemyRows*2 - 1)
@@ -103,25 +112,25 @@ else:
 #     enemyGapWidth = maxColumnWidth // enemyColumns - enemyWidth
 
 # test
-print('******* width ********')
-print('WIDTH: ' + str(WIDTH))
-print('enemyColumns: ' + str(enemyColumns))
-print('maxColumns: ' + str(maxColumns))
-print('enemyMoveDistance: ' + str(enemyMoveDistance))
-print('maxColumnWidth: ' + str(maxColumnWidth))
-print('enemyWidth: ' + str(enemyWidth))
-print('enemyGapWidth: ' + str(enemyGapWidth))
-print()
-
-print('******* height ********')
-print('HEIGHT: ' + str(HEIGHT))
-print('enemyRows: ' + str(enemyRows))
-print('maxRows: ' + str(maxRows))
-print('enemyMoveDistance: ' + str(enemyMoveDistance))
-print('maxRowHeight: ' + str(maxRowHeight))
-print('enemyHeight: ' + str(enemyHeight))
-print('enemyGapHeight: ' + str(enemyGapHeight))
-print()
+# print('******* width ********')
+# print('WIDTH: ' + str(WIDTH))
+# print('enemyColumns: ' + str(enemyColumns))
+# print('maxColumns: ' + str(maxColumns))
+# print('enemyMoveDistance: ' + str(enemyMoveDistance))
+# print('maxColumnWidth: ' + str(maxColumnWidth))
+# print('enemyWidth: ' + str(enemyWidth))
+# print('enemyGapWidth: ' + str(enemyGapWidth))
+# print()
+#
+# print('******* height ********')
+# print('HEIGHT: ' + str(HEIGHT))
+# print('enemyRows: ' + str(enemyRows))
+# print('maxRows: ' + str(maxRows))
+# print('enemyMoveDistance: ' + str(enemyMoveDistance))
+# print('maxRowHeight: ' + str(maxRowHeight))
+# print('enemyHeight: ' + str(enemyHeight))
+# print('enemyGapHeight: ' + str(enemyGapHeight))
+# print()
 
 
 
