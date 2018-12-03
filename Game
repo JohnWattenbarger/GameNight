@@ -337,12 +337,13 @@ def victoryAnimation():
 
     newX = WIDTH//2 - newPlayerWidth//2
     newY = HEIGHT//2 - newPlayerHeight//2
-    newPlayerSpeed = 5
+    newPlayerSpeed = 6
 
     # create a cape
-    # capeX = WIDTH-130
-    capeX = WIDTH//2 + abs(player.x - WIDTH//2)
-    capeY = HEIGHT//2 - abs(player.y - HEIGHT//2)
+    capeX = WIDTH-130
+    capeY = 0
+    # capeX = WIDTH//2 + abs(player.x - WIDTH//2)
+    # capeY = HEIGHT//2 - abs(player.y - HEIGHT//2)
     capeWidth = playerWidth
     capeHeight = playerHeight
     capeSpeed = newPlayerSpeed
@@ -366,15 +367,30 @@ def victoryAnimation():
     newWhiskeyWidth = whiskey.width*whiskeyGrowScale
     newWhiskeyHeight = whiskey.height*whiskeyGrowScale
 
+    newWhiskeyX = newX - 13*whiskeyGrowScale
+    newWhiskeyY = newY+whiskeyGrowScale
+
     # temporarily change speed for animation
     player.speed = newPlayerSpeed
 
-    # move player to center of screen
-    while (player.x != newX or player.y != newY) or (cape.x != newX or cape.y != newY):
+    # test
+    while (player.x != newX or player.y != newY):
         screen.fill(backgroundColor)
         screen.blit(backgroundImage, (0, 0, WIDTH, HEIGHT))
 
-        # grow images
+        if player.width != newPlayerWidth or player.height != newPlayerHeight:
+            player.changeToSize(newPlayerWidth, newPlayerHeight, growSpeed)
+            player.setImage(playerImage)
+
+        player.moveTowards(newX, newY)
+        player.drawImage()
+
+        pygame.display.update()
+
+    while (cape.x != newX or cape.y != newY) or (whiskey.x != newWhiskeyX or whiskey.y != newWhiskeyY):
+        screen.fill(backgroundColor)
+        screen.blit(backgroundImage, (0, 0, WIDTH, HEIGHT))
+
         if cape.width != newCapeWidth or cape.height != newCapeHeight:
             cape.changeToSize(newCapeWidth, newCapeHeight, growSpeed)
             cape.setImage(capeImage)
@@ -383,24 +399,50 @@ def victoryAnimation():
             whiskey.changeToSize(newWhiskeyWidth, newWhiskeyHeight, growSpeed)
             whiskey.setImage(whiskeyImage)
 
-        if player.width != newPlayerWidth or player.height != newPlayerHeight:
-            player.changeToSize(newPlayerWidth, newPlayerHeight, growSpeed)
-            player.setImage(playerImage)
-
-        # move/draw images
-        if player.x < WIDTH // 2:
-            cape.moveTowards(newX, newY)
-        else:
-            cape.moveTowards(player.x, player.y)
+        cape.moveTowards(newX, newY)
         cape.drawImage()
 
-        player.moveTowards(newX, newY)
         player.drawImage()
 
-        whiskey.moveTowards(newX - 13*whiskeyGrowScale, newY+whiskeyGrowScale)
+        whiskey.moveTowards(newX - 13 * whiskeyGrowScale, newY + whiskeyGrowScale)
         whiskey.drawImage()
 
         pygame.display.update()
+
+
+
+    # move player to center of screen
+    # while (player.x != newX or player.y != newY) or (cape.x != newX or cape.y != newY):
+    #     screen.fill(backgroundColor)
+    #     screen.blit(backgroundImage, (0, 0, WIDTH, HEIGHT))
+    #
+    #     # grow images
+    #     if cape.width != newCapeWidth or cape.height != newCapeHeight:
+    #         cape.changeToSize(newCapeWidth, newCapeHeight, growSpeed)
+    #         cape.setImage(capeImage)
+    #
+    #     if whiskey.width != newWhiskeyWidth or whiskey.height != newWhiskeyHeight:
+    #         whiskey.changeToSize(newWhiskeyWidth, newWhiskeyHeight, growSpeed)
+    #         whiskey.setImage(whiskeyImage)
+    #
+    #     if player.width != newPlayerWidth or player.height != newPlayerHeight:
+    #         player.changeToSize(newPlayerWidth, newPlayerHeight, growSpeed)
+    #         player.setImage(playerImage)
+    #
+    #     # move/draw images
+    #     if player.x < WIDTH // 2:
+    #         cape.moveTowards(newX, newY)
+    #     else:
+    #         cape.moveTowards(player.x, player.y)
+    #     cape.drawImage()
+    #
+    #     player.moveTowards(newX, newY)
+    #     player.drawImage()
+    #
+    #     whiskey.moveTowards(newX - 13*whiskeyGrowScale, newY+whiskeyGrowScale)
+    #     whiskey.drawImage()
+    #
+    #     pygame.display.update()
 
     # change speed back
     player.speed = playerSpeed
